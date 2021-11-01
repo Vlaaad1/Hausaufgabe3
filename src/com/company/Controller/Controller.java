@@ -31,6 +31,7 @@ public class Controller {
      * @return true, wenn der Student zum Kurs eingeschrieben ist
      */
     public boolean register(Student stud, Course course) {
+        //erstens verifiziert man die Ausnahme
         if (course.getStudentsEnrolled().size() == course.getMaxEnrollment()) {
             System.out.println("Maximum number of students reached");
             return false;
@@ -42,11 +43,11 @@ public class Controller {
         else {
             ArrayList<Course> newCourseList = (ArrayList<Course>) stud.getEnrolledCourses();
             newCourseList.add(course);
-            stud.setEnrolledCourses(newCourseList);
-            stud.setTotalCredits(stud.getTotalCredits() + course.getCredit());
+            stud.setEnrolledCourses(newCourseList); //aktualisiert die Liste von Kursen
+            stud.setTotalCredits(stud.getTotalCredits() + course.getCredit()); //aktualisiert die Anzahl von Credits
             ArrayList<Student> newStudList = (ArrayList<Student>) course.getStudentsEnrolled();
             newStudList.add(stud);
-            course.setStudentsEnrolled(newStudList);
+            course.setStudentsEnrolled(newStudList); //aktualisiert die Liste von Studenten
             return true;
         }
     }
@@ -56,8 +57,8 @@ public class Controller {
      * die Kurse und die Anzahl der Plätze
      */
     public ArrayList<Course> retrieveCourses() {
-        ArrayList<Course> newList = new ArrayList<>();
-        for (Course c : cRepo.findAll()) {
+        ArrayList<Course> newList = new ArrayList<>(); //erstellen eine neue Liste
+        for (Course c : cRepo.findAll()) { //sucht man alle Kursen von cRepo
             if (c.getStudentsEnrolled().size() < c.getMaxEnrollment()) {
                 newList.add(c);
                 System.out.println(c + " " + (c.getMaxEnrollment() - c.getStudentsEnrolled().size()));
@@ -88,10 +89,14 @@ public class Controller {
      *  @param newCredits ist die neue Anzahl von Credits
      */
     public void updateCredits(Course c, int newCredits) {
+        //hier kalkuliert man die Differenz zwischen den Wert von
+        // alte Credits une newCredits
         int diff = c.getCredit() - newCredits;
         cRepo.findOne(c).setCredit(newCredits);
         for (Student s: c.getStudentsEnrolled()) {
             s.setTotalCredits(s.getTotalCredits() - diff);
+            //hier aktualisiert man die Anzahl von Credits einen Student
+            // der in den Kurs c angemeldet ist
         }
     }
 
@@ -101,10 +106,10 @@ public class Controller {
      * @param c ist der Kurs, für den wir den Lehrer entfernen wollen
      */
     public void deleteTeacher (Course c) {
-        c.getTeacher().getCourses().remove(c);
+        c.getTeacher().getCourses().remove(c);//löscht man den Professor vom Kurs c
         c.setTeacher(null);
-        for (Student s: c.getStudentsEnrolled())
-        {
+        for (Student s: c.getStudentsEnrolled()) {
+            //entfernt den Kurs von allen eingeschriebenen Schülern
             ArrayList<Course> newCourseList = (ArrayList<Course>) s.getEnrolledCourses();
             newCourseList.remove(c);
             s.setEnrolledCourses(newCourseList);

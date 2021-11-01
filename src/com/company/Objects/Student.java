@@ -24,6 +24,8 @@ public class Student extends Person{
         super(firstName, lastName);
         this.studentID = studentID;
         this.enrolledCourses = enrolledCourses;
+        // man kalkuliert die Anzahl von Credits einen Student
+        // abhängig von Liste der Kurse er angemeldet ist
         for (Course course:this.enrolledCourses)
             totalCredits += course.getCredit();
     }
